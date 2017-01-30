@@ -6,6 +6,7 @@
 </template>
 
 <script>
+import axios from 'axios';
 import AppForm from './components/Form.vue';
 import AppDashboard from './components/Dashboard.vue';
 
@@ -18,12 +19,31 @@ export default {
   data() {
     return {
       user: '',
+      blocklist: [],
     }
   },
   methods: {
     onSuccessLogin(user) {
       this.user = user;
-    }
+      this.getBlocklist(user.filtering);
+    },
+    getBlocklist(isFiltering) {
+      const url = 'https://www.ovpn.se/v2/api/client/blocklist';
+      axios.get(url)
+        .then((res) => {
+          const allDomains = res.data.domains;
+          if(isFiltering) {
+            this.blocklist = allDomains;
+          } else {
+            this.blocklist = allDomains.filter((domain) => {
+              return domain.type === "tracker";
+            });
+          }
+        })
+        .catch((err) => {
+          console.log(error);
+        });
+    },
   }
 }
 </script>
