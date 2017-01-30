@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <app-form></app-form>
+    <app-form @loggedIn="onSuccessLogin($event)"></app-form>
   </div>
 </template>
 
@@ -12,6 +12,11 @@ export default {
   components: {
     AppForm,
   },
+  methods: {
+    onSuccessLogin(data) {
+      console.log('Success login from App', data);
+    }
+  }
 }
 </script>
 

@@ -37,6 +37,7 @@ export default {
   },
   methods: {
     onSubmit() {
+      this.errorMessage = '';
       const url = 'https://www.ovpn.se/v2/api/client';
       axios.post(url, {
         username: this.username,
@@ -44,15 +45,24 @@ export default {
       })
       .then((res) => {
         if(res.status === 200) {
-          console.log(res.data);
+          this.$emit('loggedIn', {
+            username: this.username,
+            filtering: res.data.user.addons.filtering.active
+          });
         }
       })
       .catch((error) => {
-        console.log(error.message);
-        if (error.response.status === 422) {
-          this.errorMessage = error.response.data.message;
+        this.resetForm();
+        if(error.response) {
+          if (error.response.status === 422) {
+            this.errorMessage = error.response.data.message;
+          }
         }
       });
+    },
+    resetForm() {
+      this.username = '';
+      this.password = '';
     }
   },
 }
