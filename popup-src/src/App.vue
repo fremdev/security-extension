@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <app-form v-if="!user" @loggedIn="onSuccessLogin($event)"></app-form>
-    <app-dashboard v-if="user"></app-dashboard>
+    <app-dashboard v-if="user" :user="user"></app-dashboard>
   </div>
 </template>
 
