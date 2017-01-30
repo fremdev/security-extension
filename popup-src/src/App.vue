@@ -1,20 +1,28 @@
 <template>
   <div id="app">
-    <app-form @loggedIn="onSuccessLogin($event)"></app-form>
+    <app-form v-if="!user" @loggedIn="onSuccessLogin($event)"></app-form>
+    <app-dashboard v-if="user"></app-dashboard>
   </div>
 </template>
 
 <script>
 import AppForm from './components/Form.vue';
+import AppDashboard from './components/Dashboard.vue';
 
 export default {
   name: 'app',
   components: {
     AppForm,
+    AppDashboard,
+  },
+  data() {
+    return {
+      user: '',
+    }
   },
   methods: {
-    onSuccessLogin(data) {
-      console.log('Success login from App', data);
+    onSuccessLogin(user) {
+      this.user = user;
     }
   }
 }
