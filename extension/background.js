@@ -60,6 +60,7 @@ chrome.runtime.onMessage.addListener(
       state = {
         blocklist: null,
         user: null,
+        count: 0
       };
     } else if(request.getCount) {
       sendResponse({count: state.count});

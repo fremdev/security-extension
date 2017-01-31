@@ -42,6 +42,7 @@ export default {
       chrome.storage.local.remove(['ovpn_user', 'ovpn_blocklist']);
       this.user = null;
       this.blocklist = null;
+      this.blockCount = 0;
       this.sendLogoutToBackground();
     },
     getBlockedReqCount() {
