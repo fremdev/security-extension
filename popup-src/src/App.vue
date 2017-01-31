@@ -1,5 +1,8 @@
 <template>
   <div id="app">
+    <div class="logo">
+      <img src="./assets/ovpn-logo.png" alt="OVPN.se" title="OVPN.se">
+    </div>
     <app-form v-if="!user" @loggedIn="onSuccessLogin($event)"></app-form>
     <app-dashboard v-if="user" :user="user"></app-dashboard>
   </div>
@@ -16,6 +19,9 @@ export default {
     AppForm,
     AppDashboard,
   },
+  mounted() {
+    this.checkChromeStorage();
+  },
   data() {
     return {
       user: '',
@@ -25,6 +31,7 @@ export default {
   methods: {
     onSuccessLogin(user) {
       this.user = user;
+      chrome.storage.local.set({'ovpn_user': user});
       this.getBlocklist(user.filtering);
     },
     getBlocklist(isFiltering) {
@@ -44,6 +51,12 @@ export default {
           console.log(error);
         });
     },
+    checkChromeStorage() {
+      chrome.storage.local.get('ovpn_user', (items) => {
+        this.user = items.ovpn_user;
+        console.log(items);
+      });
+    }
   }
 }
 </script>
@@ -55,6 +68,10 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+  width: 200px;
+}
+.logo {
+  background-color: #153752;
+  margin-bottom: 20px;
 }
 </style>
