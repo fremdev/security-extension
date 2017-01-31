@@ -10,8 +10,15 @@
    "default_popup": "popup.html"
   },
 
+  "background": {
+    "scripts": ["background.js"]
+  },
+
   "permissions": [
    "activeTab",
-   "storage"
+   "storage",
+   "webRequest",
+   "webRequestBlocking",
+   "<all_urls>"
   ]
 }

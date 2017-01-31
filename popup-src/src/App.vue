@@ -5,6 +5,7 @@
     </div>
     <app-form v-if="!user" @loggedIn="onSuccessLogin($event)"></app-form>
     <app-dashboard v-if="user" :user="user"></app-dashboard>
+    <button @click="sendBlocklistToBackground(blocklist)">Greet</button>
   </div>
 </template>
 
@@ -46,15 +47,21 @@ export default {
               return domain.type === "tracker";
             });
           }
+          this.sendBlocklistToBackground(this.blocklist);
         })
         .catch((err) => {
           console.log(error);
         });
     },
+    sendBlocklistToBackground(blocklist) {
+      chrome.runtime.sendMessage({blocklist});
+    },
     checkChromeStorage() {
       chrome.storage.local.get('ovpn_user', (items) => {
         this.user = items.ovpn_user;
-        console.log(items);
+        if(this.user) {
+          this.getBlocklist(this.user.filtering);
+        }
       });
     }
   }
