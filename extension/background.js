@@ -1,6 +1,7 @@
 var state = {
   blocklist: null,
   user: null,
+  count: 0
 };
 
 chrome.storage.local.get(['ovpn_user', 'ovpn_blocklist'], function(items) {
@@ -18,6 +19,8 @@ function formatBlocklist(blocklist) {
 }
 
 function requestHandler() {
+  state.count += 1;
+  chrome.runtime.sendMessage({blockRequest: state.count});
   return {cancel: true};
 }
 
@@ -58,7 +61,9 @@ chrome.runtime.onMessage.addListener(
         blocklist: null,
         user: null,
       };
-    }
+    } else if(request.getCount) {
+      sendResponse({count: state.count});
+    } 
 });
 
 

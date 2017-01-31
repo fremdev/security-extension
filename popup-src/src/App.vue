@@ -4,8 +4,8 @@
       <img src="./assets/ovpn-logo.png" alt="OVPN.se" title="OVPN.se">
     </div>
     <app-form v-if="!user" @loggedIn="onSuccessLogin($event)"></app-form>
-    <app-dashboard v-if="user" :user="user"></app-dashboard>
-    <button @click="onLogout">Logout</button>
+    <app-dashboard v-if="user" :user="user" :count="blockCount"></app-dashboard>
+    <button v-if="user" @click="onLogout">Logout</button>
   </div>
 </template>
 
@@ -22,11 +22,14 @@ export default {
   },
   mounted() {
     this.checkChromeStorage();
+    this.getBlockedReqCount();
+    this.onBlockedReq();
   },
   data() {
     return {
       user: null,
       blocklist: null,
+      blockCount: 0,
     }
   },
   methods: {
@@ -40,6 +43,19 @@ export default {
       this.user = null;
       this.blocklist = null;
       this.sendLogoutToBackground();
+    },
+    getBlockedReqCount() {
+      chrome.runtime.sendMessage({getCount: true}, (res) => {
+        this.blockCount = res.count;
+      });
+    },
+    onBlockedReq() {
+      chrome.runtime.onMessage.addListener(
+        (request, sender, sendResponse) => {
+          if(request.blockRequest) {
+            this.blockCount = request.blockRequest;
+          }
+        });
     },
     getBlocklist(isFiltering) {
       const url = 'https://www.ovpn.se/v2/api/client/blocklist';
