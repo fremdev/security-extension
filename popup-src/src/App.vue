@@ -5,7 +5,7 @@
     </div>
     <app-form v-if="!user" @loggedIn="onSuccessLogin($event)"></app-form>
     <app-dashboard v-if="user" :user="user"></app-dashboard>
-    <button @click="sendBlocklistToBackground(blocklist)">Greet</button>
+    <button @click="onLogout">Logout</button>
   </div>
 </template>
 
@@ -25,8 +25,8 @@ export default {
   },
   data() {
     return {
-      user: '',
-      blocklist: [],
+      user: null,
+      blocklist: null,
     }
   },
   methods: {
@@ -34,6 +34,12 @@ export default {
       this.user = user;
       chrome.storage.local.set({'ovpn_user': user});
       this.getBlocklist(user.filtering);
+    },
+    onLogout() {
+      chrome.storage.local.remove(['ovpn_user', 'ovpn_blocklist']);
+      this.user = null;
+      this.blocklist = null;
+      this.sendLogoutToBackground();
     },
     getBlocklist(isFiltering) {
       const url = 'https://www.ovpn.se/v2/api/client/blocklist';
@@ -55,6 +61,9 @@ export default {
     },
     sendBlocklistToBackground(blocklist) {
       chrome.runtime.sendMessage({blocklist});
+    },
+    sendLogoutToBackground() {
+      chrome.runtime.sendMessage({'logout': true});
     },
     checkChromeStorage() {
       chrome.storage.local.get('ovpn_user', (items) => {
