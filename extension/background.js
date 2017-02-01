@@ -70,6 +70,7 @@ chrome.runtime.onMessage.addListener(
       updateBeforeRequestListener();
     } else if(request.logout) {
       removeBeforeRequestListener();
+      updateBadgeMessage('');
       state = {
         blocklist: null,
         user: null,
