@@ -18,9 +18,22 @@ function formatBlocklist(blocklist) {
   });
 }
 
-function requestHandler() {
+function updateBadgeMessage(message) {
+  chrome.browserAction.setBadgeText({text: message.toString()});
+}
+
+function updateBlockedReqCount() {
   state.count += 1;
+  if(state.count < 1000) {
+    updateBadgeMessage(state.count);
+  } else if(state.count === 1000) {
+    updateBadgeMessage('>999');
+  }
   chrome.runtime.sendMessage({blockRequest: state.count});
+}
+
+function requestHandler() {
+  updateBlockedReqCount();
   return {cancel: true};
 }
 
@@ -64,9 +77,5 @@ chrome.runtime.onMessage.addListener(
       };
     } else if(request.getCount) {
       sendResponse({count: state.count});
-    } 
+    }
 });
-
-
-
-
