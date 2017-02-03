@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import api from '../api/ovpn-api';
 import ErrorMessage from './ErrorMessage.vue';
 
 export default {
@@ -38,27 +38,14 @@ export default {
   methods: {
     onSubmit() {
       this.errorMessage = '';
-      const url = 'https://www.ovpn.se/v2/api/client';
-      axios.post(url, {
-        username: this.username,
-        password: this.password
-      })
-      .then((res) => {
-        if(res.status === 200) {
-          this.$emit('loggedIn', {
-            username: this.username,
-            filtering: res.data.user.addons.filtering.active
-          });
-        }
-      })
-      .catch((error) => {
-        this.resetForm();
-        if(error.response) {
-          if (error.response.status === 422) {
-            this.errorMessage = error.response.data.message;
-          }
-        }
-      });
+      api.login(this.username, this.password)
+        .then((res) => {
+          this.$emit('loggedIn', res);
+        })
+        .catch((err) => {
+          this.resetForm();
+          this.errorMessage = err.message;
+        });
     },
     resetForm() {
       this.username = '';

@@ -21,4 +21,28 @@ export default {
         console.log(error);
       });
   },
+
+  login(username, password) {
+    const url = `${baseUrl}/client`;
+
+    return axios.post(url, {
+      username,
+      password
+    })
+    .then((res) => {
+      if(res.status === 200) {
+        return {
+          username,
+          filtering: res.data.user.addons.filtering.active
+        };
+      }
+    })
+    .catch((error) => {
+      if(error.response) {
+        if (error.response.status === 422) {
+          throw new Error(error.response.data.message);
+        }
+      }
+    });
+  }
 }
