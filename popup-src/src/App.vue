@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import api from './api/ovpn-api';
 import AppForm from './components/Form.vue';
 import AppDashboard from './components/Dashboard.vue';
 
@@ -59,21 +59,9 @@ export default {
         });
     },
     getBlocklist(isFiltering) {
-      const url = 'https://www.ovpn.se/v2/api/client/blocklist';
-      axios.get(url)
-        .then((res) => {
-          const allDomains = res.data.domains;
-          if(isFiltering) {
-            this.blocklist = allDomains;
-          } else {
-            this.blocklist = allDomains.filter((domain) => {
-              return domain.type === "tracker";
-            });
-          }
-          this.sendBlocklistToBackground(this.blocklist);
-        })
-        .catch((err) => {
-          console.log(error);
+      api.getBlocklist(isFiltering)
+        .then((blocklist) => {
+          this.sendBlocklistToBackground(blocklist);
         });
     },
     sendBlocklistToBackground(blocklist) {
